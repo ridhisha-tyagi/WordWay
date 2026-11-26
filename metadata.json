@@ -1,0 +1,6 @@
+{
+  "name": "LexiQuest: Spell, Vocab & Grammar",
+  "description": "Free, mobile-installable spelling, vocabulary, and grammar adventure game with audio pronunciation, daily quests, and speed arena.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

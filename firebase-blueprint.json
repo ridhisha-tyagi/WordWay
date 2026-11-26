@@ -1,0 +1,267 @@
+{
+  "entities": {
+    "LeaderboardEntry": {
+      "title": "LeaderboardEntry",
+      "description": "Public Speed Arena high score record for a player on the global top-100 leaderboard (no PII stored).",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Firebase Auth UID of the player."
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40,
+          "description": "Public player display name shown on the leaderboard."
+        },
+        "realmBadge": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 24,
+          "description": "Active exam realm badge (e.g., SSC, GATE, IELTS)."
+        },
+        "level": {
+          "type": "number",
+          "description": "Player WordForge progression level."
+        },
+        "highScore": {
+          "type": "number",
+          "description": "Player best 60-second Speed Arena score."
+        },
+        "wordsLearned": {
+          "type": "number",
+          "description": "Total words and grammar rules practiced by the player."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the player first joined the leaderboard."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the player last updated their score."
+        }
+      },
+      "required": [
+        "uid",
+        "displayName",
+        "realmBadge",
+        "level",
+        "highScore",
+        "wordsLearned",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Private cross-device cloud save profile for an authenticated WordForge player (no PII stored).",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Firebase Auth UID of the profile owner."
+        },
+        "xp": {
+          "type": "number",
+          "description": "Total earned XP."
+        },
+        "level": {
+          "type": "number",
+          "description": "Computed player progression level."
+        },
+        "streak": {
+          "type": "number",
+          "description": "Current active day streak."
+        },
+        "longestStreak": {
+          "type": "number",
+          "description": "Longest historical day streak."
+        },
+        "lastActiveDate": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Last active YYYY-MM-DD calendar date."
+        },
+        "wordsMasteredCount": {
+          "type": "number",
+          "description": "Completed Quest Map stage milestones."
+        },
+        "wordsLearnedCount": {
+          "type": "number",
+          "description": "Total words and grammar clues practiced."
+        },
+        "speedArenaHighScore": {
+          "type": "number",
+          "description": "Personal best 60s Speed Arena score."
+        },
+        "dailyQuestLastCompleted": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Last completed Daily Quest YYYY-MM-DD date."
+        },
+        "dailyQuestsCompletedCount": {
+          "type": "number",
+          "description": "Total Daily Quests completed."
+        },
+        "roundsCompletedCount": {
+          "type": "number",
+          "description": "Total practice sessions finished."
+        },
+        "savedDifficulty": {
+          "type": "string",
+          "maxLength": 40,
+          "description": "Selected exam realm difficulty key."
+        },
+        "savedSubLevelId": {
+          "type": "string",
+          "maxLength": 40,
+          "description": "Selected exam sub-level key."
+        },
+        "hintCoins": {
+          "type": "number",
+          "description": "Current hint coin balance."
+        },
+        "adFreePass": {
+          "type": "boolean",
+          "description": "Whether Ad-Free Pass is active."
+        },
+        "completedStages": {
+          "type": "object",
+          "description": "Map of realm tier IDs to arrays of completed stage numbers."
+        },
+        "claimedAchievementIds": {
+          "type": "array",
+          "description": "List of claimed achievement IDs."
+        },
+        "vaultItems": {
+          "type": "array",
+          "description": "Saved Word Vault flashcards and notes (capped at 500)."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when cloud save was created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of latest cloud save update."
+        }
+      },
+      "required": [
+        "uid",
+        "xp",
+        "level",
+        "streak",
+        "longestStreak",
+        "lastActiveDate",
+        "wordsMasteredCount",
+        "wordsLearnedCount",
+        "speedArenaHighScore",
+        "dailyQuestLastCompleted",
+        "dailyQuestsCompletedCount",
+        "roundsCompletedCount",
+        "savedDifficulty",
+        "savedSubLevelId",
+        "hintCoins",
+        "adFreePass",
+        "completedStages",
+        "claimedAchievementIds",
+        "vaultItems",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "WeeklyLeaderboardEntry": {
+      "title": "WeeklyLeaderboardEntry",
+      "description": "Public weekly season Speed Arena high score record for a player (no PII stored).",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Firebase Auth UID of the player."
+        },
+        "seasonId": {
+          "type": "string",
+          "maxLength": 16,
+          "pattern": "^[0-9]{4}-W[0-9]{2}$",
+          "description": "ISO UTC weekly season identifier (e.g., 2026-W47)."
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40,
+          "description": "Public player display name shown on the weekly leaderboard."
+        },
+        "realmBadge": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 24,
+          "description": "Active exam realm badge (e.g., SSC, GATE, IELTS)."
+        },
+        "level": {
+          "type": "number",
+          "description": "Player WordForge progression level."
+        },
+        "highScore": {
+          "type": "number",
+          "description": "Player best 60-second Speed Arena score in this weekly season."
+        },
+        "wordsLearned": {
+          "type": "number",
+          "description": "Total words and grammar rules practiced by the player."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the player entered this weekly season."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the weekly record was last updated."
+        }
+      },
+      "required": [
+        "uid",
+        "seasonId",
+        "displayName",
+        "realmBadge",
+        "level",
+        "highScore",
+        "wordsLearned",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/leaderboard_entries/{userId}": {
+      "schema": {
+        "$ref": "#/entities/LeaderboardEntry"
+      },
+      "description": "Public top-100 Speed Arena leaderboard records keyed by verified player UID."
+    },
+    "/user_profiles/{userId}": {
+      "schema": {
+        "$ref": "#/entities/UserProfile"
+      },
+      "description": "Private cross-device cloud progress document owned exclusively by each verified player."
+    },
+    "/weekly_seasons/{seasonId}/entries/{userId}": {
+      "schema": {
+        "$ref": "#/entities/WeeklyLeaderboardEntry"
+      },
+      "description": "Public weekly season top-100 Speed Arena rankings segmented by ISO UTC week."
+    }
+  }
+}

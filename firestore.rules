@@ -1,0 +1,325 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global safety net: deny everything by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isOwner(userId) {
+      return isVerifiedUser() && request.auth.uid == userId;
+    }
+
+    function isValidLeaderboardEntry(data, userId) {
+      return data.keys().hasAll([
+          'uid',
+          'displayName',
+          'realmBadge',
+          'level',
+          'highScore',
+          'wordsLearned',
+          'createdAt',
+          'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'uid',
+          'displayName',
+          'realmBadge',
+          'level',
+          'highScore',
+          'wordsLearned',
+          'createdAt',
+          'updatedAt'
+        ])
+        && data.uid is string
+        && data.uid.size() >= 1
+        && data.uid.size() <= 128
+        && data.uid.matches('^[a-zA-Z0-9_\\-]+$')
+        && data.uid == userId
+        && data.displayName is string
+        && data.displayName.size() >= 1
+        && data.displayName.size() <= 40
+        && data.realmBadge is string
+        && data.realmBadge.size() >= 1
+        && data.realmBadge.size() <= 24
+        && data.level is number
+        && data.level >= 1
+        && data.level <= 500
+        && data.highScore is number
+        && data.highScore >= 0
+        && data.highScore <= 1000000
+        && data.wordsLearned is number
+        && data.wordsLearned >= 0
+        && data.wordsLearned <= 10000000
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidWeeklyLeaderboardEntry(data, userId, seasonId) {
+      return data.keys().hasAll([
+          'uid',
+          'seasonId',
+          'displayName',
+          'realmBadge',
+          'level',
+          'highScore',
+          'wordsLearned',
+          'createdAt',
+          'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'uid',
+          'seasonId',
+          'displayName',
+          'realmBadge',
+          'level',
+          'highScore',
+          'wordsLearned',
+          'createdAt',
+          'updatedAt'
+        ])
+        && data.uid is string
+        && data.uid.size() >= 1
+        && data.uid.size() <= 128
+        && data.uid.matches('^[a-zA-Z0-9_\\-]+$')
+        && data.uid == userId
+        && data.seasonId is string
+        && data.seasonId.size() <= 16
+        && data.seasonId.matches('^[0-9]{4}-W[0-9]{2}$')
+        && data.seasonId == seasonId
+        && data.displayName is string
+        && data.displayName.size() >= 1
+        && data.displayName.size() <= 40
+        && data.realmBadge is string
+        && data.realmBadge.size() >= 1
+        && data.realmBadge.size() <= 24
+        && data.level is number
+        && data.level >= 1
+        && data.level <= 500
+        && data.highScore is number
+        && data.highScore >= 0
+        && data.highScore <= 1000000
+        && data.wordsLearned is number
+        && data.wordsLearned >= 0
+        && data.wordsLearned <= 10000000
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidUserProfile(data, userId) {
+      return data.keys().hasAll([
+          'uid',
+          'xp',
+          'level',
+          'streak',
+          'longestStreak',
+          'lastActiveDate',
+          'wordsMasteredCount',
+          'wordsLearnedCount',
+          'speedArenaHighScore',
+          'dailyQuestLastCompleted',
+          'dailyQuestsCompletedCount',
+          'roundsCompletedCount',
+          'savedDifficulty',
+          'savedSubLevelId',
+          'hintCoins',
+          'adFreePass',
+          'completedStages',
+          'claimedAchievementIds',
+          'vaultItems',
+          'createdAt',
+          'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'uid',
+          'xp',
+          'level',
+          'streak',
+          'longestStreak',
+          'lastActiveDate',
+          'wordsMasteredCount',
+          'wordsLearnedCount',
+          'speedArenaHighScore',
+          'dailyQuestLastCompleted',
+          'dailyQuestsCompletedCount',
+          'roundsCompletedCount',
+          'savedDifficulty',
+          'savedSubLevelId',
+          'hintCoins',
+          'adFreePass',
+          'completedStages',
+          'claimedAchievementIds',
+          'vaultItems',
+          'createdAt',
+          'updatedAt'
+        ])
+        && data.uid is string
+        && data.uid.size() >= 1
+        && data.uid.size() <= 128
+        && data.uid.matches('^[a-zA-Z0-9_\\-]+$')
+        && data.uid == userId
+        && data.xp is number && data.xp >= 0 && data.xp <= 10000000
+        && data.level is number && data.level >= 1 && data.level <= 500
+        && data.streak is number && data.streak >= 0 && data.streak <= 10000
+        && data.longestStreak is number && data.longestStreak >= 0 && data.longestStreak <= 10000
+        && data.lastActiveDate is string && data.lastActiveDate.size() <= 20
+        && data.wordsMasteredCount is number && data.wordsMasteredCount >= 0 && data.wordsMasteredCount <= 10000000
+        && data.wordsLearnedCount is number && data.wordsLearnedCount >= 0 && data.wordsLearnedCount <= 10000000
+        && data.speedArenaHighScore is number && data.speedArenaHighScore >= 0 && data.speedArenaHighScore <= 1000000
+        && data.dailyQuestLastCompleted is string && data.dailyQuestLastCompleted.size() <= 20
+        && data.dailyQuestsCompletedCount is number && data.dailyQuestsCompletedCount >= 0 && data.dailyQuestsCompletedCount <= 100000
+        && data.roundsCompletedCount is number && data.roundsCompletedCount >= 0 && data.roundsCompletedCount <= 1000000
+        && data.savedDifficulty is string && data.savedDifficulty.size() >= 1 && data.savedDifficulty.size() <= 40
+        && data.savedSubLevelId is string && data.savedSubLevelId.size() <= 40
+        && data.hintCoins is number && data.hintCoins >= 0 && data.hintCoins <= 100000
+        && data.adFreePass is bool
+        && data.completedStages is map && data.completedStages.size() <= 16
+        && data.claimedAchievementIds is list
+        && data.claimedAchievementIds.size() <= 100
+        && (data.claimedAchievementIds.size() == 0 || data.claimedAchievementIds[0] is string)
+        && data.vaultItems is list
+        && data.vaultItems.size() <= 500
+        && (data.vaultItems.size() == 0 || data.vaultItems[0] is map)
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    match /leaderboard_entries/{userId} {
+      // Public non-PII top-100 Speed Arena scores
+      allow get: if isValidId(userId) && resource.data.highScore >= 0;
+      allow list: if resource.data.highScore >= 0 && request.query.limit <= 100;
+
+      allow create: if isValidId(userId)
+        && isOwner(userId)
+        && isValidLeaderboardEntry(incoming(), userId)
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+
+      allow update: if isValidId(userId)
+        && isOwner(userId)
+        && isValidLeaderboardEntry(incoming(), userId)
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'displayName',
+          'realmBadge',
+          'level',
+          'highScore',
+          'wordsLearned',
+          'updatedAt'
+        ])
+        && incoming().uid == existing().uid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().highScore >= existing().highScore;
+
+      allow delete: if isValidId(userId) && isOwner(userId);
+    }
+
+    match /user_profiles/{userId} {
+      // Strictly owner-only private cloud progress save (no listing allowed)
+      allow get: if isValidId(userId) && isOwner(userId);
+      allow list: if false;
+
+      allow create: if isValidId(userId)
+        && isOwner(userId)
+        && isValidUserProfile(incoming(), userId)
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+
+      allow update: if isValidId(userId)
+        && isOwner(userId)
+        && isValidUserProfile(incoming(), userId)
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'xp',
+          'level',
+          'streak',
+          'longestStreak',
+          'lastActiveDate',
+          'wordsMasteredCount',
+          'wordsLearnedCount',
+          'speedArenaHighScore',
+          'dailyQuestLastCompleted',
+          'dailyQuestsCompletedCount',
+          'roundsCompletedCount',
+          'savedDifficulty',
+          'savedSubLevelId',
+          'hintCoins',
+          'adFreePass',
+          'completedStages',
+          'claimedAchievementIds',
+          'vaultItems',
+          'updatedAt'
+        ])
+        && incoming().uid == existing().uid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time;
+
+      allow delete: if isValidId(userId) && isOwner(userId);
+    }
+
+    match /weekly_seasons/{seasonId}/entries/{userId} {
+      // Public weekly season top-100 Speed Arena scores (no PII)
+      allow get: if isValidId(seasonId)
+        && seasonId.matches('^[0-9]{4}-W[0-9]{2}$')
+        && isValidId(userId)
+        && resource.data.highScore >= 0;
+
+      allow list: if isValidId(seasonId)
+        && seasonId.matches('^[0-9]{4}-W[0-9]{2}$')
+        && resource.data.highScore >= 0
+        && request.query.limit <= 100;
+
+      allow create: if isValidId(seasonId)
+        && seasonId.matches('^[0-9]{4}-W[0-9]{2}$')
+        && isValidId(userId)
+        && isOwner(userId)
+        && isValidWeeklyLeaderboardEntry(incoming(), userId, seasonId)
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+
+      allow update: if isValidId(seasonId)
+        && seasonId.matches('^[0-9]{4}-W[0-9]{2}$')
+        && isValidId(userId)
+        && isOwner(userId)
+        && isValidWeeklyLeaderboardEntry(incoming(), userId, seasonId)
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'displayName',
+          'realmBadge',
+          'level',
+          'highScore',
+          'wordsLearned',
+          'updatedAt'
+        ])
+        && incoming().uid == existing().uid
+        && incoming().seasonId == existing().seasonId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().highScore >= existing().highScore;
+
+      allow delete: if isValidId(seasonId)
+        && seasonId.matches('^[0-9]{4}-W[0-9]{2}$')
+        && isValidId(userId)
+        && isOwner(userId);
+    }
+  }
+}
